@@ -2,10 +2,12 @@ import got from "got";
 import type { SpotifyPlaylist, SpotifyTrack } from "./types.js";
 
 const API_BASE = "https://api.spotify.com/v1";
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 50; // max allowed by the /items endpoint
 
 interface RawTrackItem {
-	track: {
+	// Spotify's Feb 2026 migration renamed `track` -> `item` on this endpoint
+	// (GET /playlists/{id}/tracks was removed in favor of /items).
+	item: {
 		id: string;
 		name: string;
 		duration_ms: number;
@@ -62,11 +64,11 @@ export async function fetchPlaylist(
 	}).json<{ name: string }>();
 
 	const tracks: SpotifyTrack[] = [];
-	let url: string | undefined = `${API_BASE}/playlists/${playlistId}/tracks`;
+	let url: string | undefined = `${API_BASE}/playlists/${playlistId}/items`;
 	let searchParams: Record<string, string | number> | undefined = {
 		limit: PAGE_SIZE,
 		fields:
-			"items(track(id,name,duration_ms,external_urls,artists(name),album(name))),next",
+			"items(item(id,name,duration_ms,external_urls,artists(name),album(name))),next",
 	};
 
 	while (url) {
@@ -76,14 +78,14 @@ export async function fetchPlaylist(
 		}).json<RawTracksPage>();
 
 		for (const item of page.items) {
-			if (!item.track) continue; // local/removed tracks show up as null
+			if (!item.item) continue; // local/removed tracks show up as null
 			tracks.push({
-				id: item.track.id,
-				name: item.track.name,
-				artists: item.track.artists.map((a) => a.name),
-				album: item.track.album.name,
-				durationMs: item.track.duration_ms,
-				url: item.track.external_urls?.spotify ?? "",
+				id: item.item.id,
+				name: item.item.name,
+				artists: item.item.artists.map((a) => a.name),
+				album: item.item.album.name,
+				durationMs: item.item.duration_ms,
+				url: item.item.external_urls?.spotify ?? "",
 			});
 		}
 

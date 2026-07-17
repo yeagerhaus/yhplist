@@ -1,8 +1,6 @@
 # yhplist
 
-Convert a specific old Spotify playlist into a Plex playlist. Point it at one playlist at a time — it finds (or creates) a matching Plex playlist by name, adds every song you already have in your Plex music library, and logs the ones it couldn't find so you know what to go acquire.
-
-Not a bulk migration tool: nothing runs on a schedule, and nothing touches playlists you didn't name.
+Convert a specific old Spotify playlist into a Plex playlist. Point it at one playlist at a time, it finds (or creates) a matching Plex playlist by name, adds every song you already have in your Plex music library, and logs the ones it couldn't find so you know what to go acquire.
 
 ## Quick Start
 
@@ -42,6 +40,8 @@ bun run dev sync "https://open.spotify.com/playlist/<id>"
 5. Writes a full run log and prints a summary of what was added and what's missing.
 
 Tracks scoring below the match threshold are treated as missing rather than force-matched to the nearest thing in your library.
+
+**Note:** as of Spotify's February 2026 API changes, playlist *contents* are only readable for playlists you own (or own collaboratively) — playlists you merely follow will only expose their name, not their tracks. Old playlists on your own account are unaffected.
 
 ## Missing tracks
 

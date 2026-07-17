@@ -6,6 +6,7 @@ import pkg from "../package.json" with { type: "json" };
 import { authCommand } from "./cli/auth.js";
 import type { SyncCommandOpts } from "./cli/sync.js";
 import { syncCommand } from "./cli/sync.js";
+import { describeError } from "./utils.js";
 
 const program = new Command();
 
@@ -19,7 +20,7 @@ program
 	.description("Log in to Spotify (opens your browser)")
 	.action(() => {
 		authCommand().catch((e) => {
-			console.error(pc.red("Error:"), e.message);
+			console.error(pc.red("Error:"), describeError(e));
 			process.exit(1);
 		});
 	});
@@ -38,7 +39,7 @@ program
 	.option("--dry-run", "Match and log only — don't write anything to Plex")
 	.action((playlist: string, opts: SyncCommandOpts) => {
 		syncCommand(playlist, opts).catch((e) => {
-			console.error(pc.red("Error:"), e.message);
+			console.error(pc.red("Error:"), describeError(e));
 			process.exit(1);
 		});
 	});
