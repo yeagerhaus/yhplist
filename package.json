@@ -1,0 +1,38 @@
+{
+	"name": "yhplist",
+	"version": "0.1.0",
+	"description": "Convert specific Spotify playlists into Plex playlists, matching against your existing library",
+	"type": "module",
+	"main": "./src/index.ts",
+	"bin": {
+		"yhplist": "./src/main.ts"
+	},
+	"scripts": {
+		"dev": "bun run src/main.ts",
+		"build": "bun build src/main.ts --outfile dist/main.js --target bun --packages external",
+		"start": "bun run dist/main.js",
+		"check:tsc": "tsc --project tsconfig.json --noEmit",
+		"check:biome": "biome check --formatter-enabled=true --linter-enabled=true --vcs-enabled=true --write --unsafe .",
+		"check:all": "bun check:tsc && bun check:biome",
+		"test": "bun test",
+		"test:watch": "bun test --watch"
+	},
+	"author": "",
+	"license": "MIT",
+	"engines": {
+		"bun": ">=1.0.0"
+	},
+	"dependencies": {
+		"commander": "^12.1.0",
+		"fuse.js": "^7.0.0",
+		"got": "^14.6.6",
+		"open": "^10.1.0",
+		"picocolors": "^1.1.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.5",
+		"@types/bun": "latest",
+		"@types/node": "^22.19.13",
+		"typescript": "^5.9.3"
+	}
+}
