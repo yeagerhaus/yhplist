@@ -20,7 +20,10 @@ interface RawTrackItem {
 interface RawTracksPage {
 	items: RawTrackItem[];
 	next: string | null;
+	total: number;
 }
+
+export type FetchProgress = (fetched: number, total: number) => void;
 
 /**
  * Extract a Spotify playlist ID from a raw ID, a spotify: URI, or an
@@ -54,6 +57,7 @@ export function parsePlaylistId(input: string): string {
 export async function fetchPlaylist(
 	playlistIdOrUrl: string,
 	accessToken: string,
+	onProgress?: FetchProgress,
 ): Promise<SpotifyPlaylist> {
 	const playlistId = parsePlaylistId(playlistIdOrUrl);
 	const headers = { Authorization: `Bearer ${accessToken}` };
@@ -68,7 +72,7 @@ export async function fetchPlaylist(
 	let searchParams: Record<string, string | number> | undefined = {
 		limit: PAGE_SIZE,
 		fields:
-			"items(item(id,name,duration_ms,external_urls,artists(name),album(name))),next",
+			"items(item(id,name,duration_ms,external_urls,artists(name),album(name))),next,total",
 	};
 
 	while (url) {
@@ -88,6 +92,8 @@ export async function fetchPlaylist(
 				url: item.item.external_urls?.spotify ?? "",
 			});
 		}
+
+		onProgress?.(tracks.length, page.total);
 
 		url = page.next ?? undefined;
 		searchParams = undefined; // `next` already includes query params

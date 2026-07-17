@@ -76,6 +76,8 @@ export async function resolveMusicSection(
 	);
 }
 
+export type FetchProgress = (fetched: number, total: number) => void;
+
 /**
  * Fetch every track in a music library section, once per run, to build an
  * in-memory index for fuzzy matching.
@@ -83,6 +85,7 @@ export async function resolveMusicSection(
 export async function fetchLibraryTracks(
 	client: Got,
 	sectionKey: string,
+	onProgress?: FetchProgress,
 ): Promise<PlexTrack[]> {
 	const tracks: PlexTrack[] = [];
 	let start = 0;
@@ -109,6 +112,8 @@ export async function fetchLibraryTracks(
 		}
 
 		start += items.length;
+		onProgress?.(tracks.length, response.MediaContainer.totalSize);
+
 		if (
 			items.length < PAGE_SIZE ||
 			start >= response.MediaContainer.totalSize
