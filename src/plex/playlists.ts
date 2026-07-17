@@ -64,7 +64,15 @@ export async function getPlaylistTrackKeys(
 	);
 }
 
-/** Create a new audio playlist seeded with the given tracks. */
+/**
+ * Create a new audio playlist seeded with the given tracks.
+ *
+ * Plex's playlist creation endpoint reliably supports only a single seed
+ * item in its `uri` param — passing many comma-joined items at once 500s on
+ * some server versions (a known quirk python-plexapi and others work around
+ * the same way). So we create with just the first track, then append the
+ * rest via the add-items endpoint, which does support large item lists.
+ */
 export async function createPlaylist(
 	client: Got,
 	title: string,
@@ -76,8 +84,9 @@ export async function createPlaylist(
 		);
 	}
 
+	const [seedKey, ...restKeys] = trackRatingKeys;
 	const machineIdentifier = await getMachineIdentifier(client);
-	const uri = buildLibraryUri(machineIdentifier, trackRatingKeys);
+	const uri = buildLibraryUri(machineIdentifier, [seedKey]);
 
 	const response = await client
 		.post("playlists", {
@@ -89,6 +98,11 @@ export async function createPlaylist(
 	if (!created) {
 		throw new Error(`Plex did not return the created playlist "${title}"`);
 	}
+
+	if (restKeys.length > 0) {
+		await addTracksToPlaylist(client, created.ratingKey, restKeys);
+	}
+
 	return { ratingKey: created.ratingKey, title: created.title };
 }
 
