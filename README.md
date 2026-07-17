@@ -1,6 +1,8 @@
 # yhplist
 
-Convert a specific old Spotify playlist into a Plex playlist. Point it at one playlist at a time, it finds (or creates) a matching Plex playlist by name, adds every song you already have in your Plex music library, and logs the ones it couldn't find so you know what to go acquire.
+Convert a specific old Spotify playlist into a Plex playlist. Point it at one playlist at a time, it finds (or creates) a matching Plex playlist by name, adds every song you already have in your Plex music library, and logs the ones it couldn't find so you know what to go acquire. 
+
+**REQUIRES AN ACTIVE SPOTIFY SUBSCRIPTION**
 
 ## Quick Start
 
