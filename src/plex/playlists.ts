@@ -32,8 +32,7 @@ function buildLibraryUri(
 	machineIdentifier: string,
 	ratingKeys: string[],
 ): string {
-	const keys = ratingKeys.map((key) => `/library/metadata/${key}`).join(",");
-	return `server://${machineIdentifier}/com.plexapp.plugins.library${keys}`;
+	return `server://${machineIdentifier}/com.plexapp.plugins.library/library/metadata/${ratingKeys.join(",")}`;
 }
 
 /** Find an existing audio playlist by case-insensitive title match. */
